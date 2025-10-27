@@ -9,7 +9,7 @@ A Ruby on Rails API application that provides blob storage services with multipl
 - **Bearer Token Authentication**: Secure access with token-based authentication
 - **Base64 Support**: Store and retrieve binary data as Base64 encoded strings
 - **Pagination**: Efficient blob listing with pagination support
-- **Modern UI**: Beautiful dashboard interface with Tailwind CSS
+- **Modern UI**: Smart dashboard interface with Tailwind CSS
 - **Storage Selection**: Choose storage backend per blob when creating
 - **SOLID Principles**: Well-structured code following software engineering best practices
 
@@ -214,7 +214,7 @@ bundle exec brakeman
 | `S3_BUCKET` | S3 bucket name | - |
 | `S3_ACCESS_KEY` | S3 access key | - |
 | `S3_SECRET_KEY` | S3 secret key | - |
-| `S3_REGION` | S3 region | `us-east-1` |
+| `S3_REGION` | S3 region | `us-east-2` |
 | `FTP_HOST` | FTP server host | - |
 | `FTP_USERNAME` | FTP username | - |
 | `FTP_PASSWORD` | FTP password | - |
