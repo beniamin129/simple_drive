@@ -1,0 +1,89 @@
+# Storage Backend Configuration
+# This file defines the available storage backends and their configurations
+
+default:
+  # Default storage backend (local, database, s3, ftp)
+  backend: local
+  
+  # Local file storage configuration
+  local:
+    storage_path: <%= Rails.root.join('storage', 'blobs') %>
+  
+  # Database storage configuration
+  database:
+    # Uses the same database as the main application
+    # No additional configuration needed
+  
+  # S3 compatible storage configuration
+  s3:
+    endpoint: <%= ENV['S3_ENDPOINT'] || 'https://s3.amazonaws.com' %>
+    bucket: <%= ENV['S3_BUCKET'] %>
+    access_key: <%= ENV['S3_ACCESS_KEY'] %>
+    secret_key: <%= ENV['S3_SECRET_KEY'] %>
+    region: <%= ENV['S3_REGION'] || 'us-east-1' %>
+  
+  # FTP storage configuration
+  ftp:
+    host: <%= ENV['FTP_HOST'] %>
+    username: <%= ENV['FTP_USERNAME'] %>
+    password: <%= ENV['FTP_PASSWORD'] %>
+    port: <%= ENV['FTP_PORT'] || 21 %>
+    remote_path: <%= ENV['FTP_REMOTE_PATH'] || '/blobs' %>
+    passive: <%= ENV['FTP_PASSIVE'] != 'false' %>
+
+development:
+  backend: ftp
+  local:
+    storage_path: <%= Rails.root.join('storage', 'blobs') %>
+  database: {}
+  s3:
+    endpoint: <%= ENV['S3_ENDPOINT'] || 'https://s3.us-east-2.amazonaws.com' %>
+    bucket: <%= ENV['S3_BUCKET'] %>
+    access_key: <%= ENV['S3_ACCESS_KEY'] %>
+    secret_key: <%= ENV['S3_SECRET_KEY'] %>
+    region: <%= ENV['S3_REGION'] || 'us-east-2' %>
+  ftp:
+    host: <%= ENV['FTP_HOST'] %>
+    username: <%= ENV['FTP_USERNAME'] %>
+    password: <%= ENV['FTP_PASSWORD'] %>
+    port: <%= ENV['FTP_PORT'] || 21 %>
+    remote_path: <%= ENV['FTP_REMOTE_PATH'] || '/blobs' %>
+    passive: <%= ENV['FTP_PASSIVE'] != 'false' %>
+
+test:
+  backend: database
+  local:
+    storage_path: <%= Rails.root.join('storage', 'blobs') %>
+  database: {}
+  s3:
+    endpoint: <%= ENV['S3_ENDPOINT'] || 'https://s3.amazonaws.com' %>
+    bucket: <%= ENV['S3_BUCKET'] %>
+    access_key: <%= ENV['S3_ACCESS_KEY'] %>
+    secret_key: <%= ENV['S3_SECRET_KEY'] %>
+    region: <%= ENV['S3_REGION'] || 'us-east-1' %>
+  ftp:
+    host: <%= ENV['FTP_HOST'] %>
+    username: <%= ENV['FTP_USERNAME'] %>
+    password: <%= ENV['FTP_PASSWORD'] %>
+    port: <%= ENV['FTP_PORT'] || 21 %>
+    remote_path: <%= ENV['FTP_REMOTE_PATH'] || '/blobs' %>
+    passive: <%= ENV['FTP_PASSIVE'] != 'false' %>
+
+production:
+  backend: <%= ENV['STORAGE_BACKEND'] || 's3' %>
+  local:
+    storage_path: <%= Rails.root.join('storage', 'blobs') %>
+  database: {}
+  s3:
+    endpoint: <%= ENV['S3_ENDPOINT'] || 'https://s3.amazonaws.com' %>
+    bucket: <%= ENV['S3_BUCKET'] %>
+    access_key: <%= ENV['S3_ACCESS_KEY'] %>
+    secret_key: <%= ENV['S3_SECRET_KEY'] %>
+    region: <%= ENV['S3_REGION'] || 'us-east-1' %>
+  ftp:
+    host: <%= ENV['FTP_HOST'] %>
+    username: <%= ENV['FTP_USERNAME'] %>
+    password: <%= ENV['FTP_PASSWORD'] %>
+    port: <%= ENV['FTP_PORT'] || 21 %>
+    remote_path: <%= ENV['FTP_REMOTE_PATH'] || '/blobs' %>
+    passive: <%= ENV['FTP_PASSIVE'] != 'false' %>

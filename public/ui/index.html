@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Drive - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3b82f6',
+                        'secondary': '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-primary">Simple Drive</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="authBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Total Blobs</p>
+                        <p class="text-3xl font-bold text-gray-900" id="totalBlobs">0</p>
+                    </div>
+                    <div class="text-4xl">📦</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Storage Backend</p>
+                        <p class="text-xl font-bold text-primary" id="storageBackend">-</p>
+                    </div>
+                    <div class="text-4xl">🗄️</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Total Size</p>
+                        <p class="text-xl font-bold text-gray-900" id="totalSize">0 B</p>
+                    </div>
+                    <div class="text-4xl">💾</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Status</p>
+                        <p class="text-xl font-bold text-green-600" id="status">Online</p>
+                    </div>
+                    <div class="text-4xl">✓</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input 
+                        type="text" 
+                        id="blobId" 
+                        placeholder="Enter blob ID (e.g., my-blob-123)" 
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                    <input 
+                        type="text" 
+                        id="blobData" 
+                        placeholder="Enter data to encode" 
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                    <button 
+                        onclick="createBlob()" 
+                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+                    >
+                        Create Blob
+                    </button>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex items-center gap-4">
+                        <label class="text-sm font-medium text-gray-700">Save to Storage:</label>
+                        <select 
+                            id="createStorageBackend" 
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        >
+                            <option value="local">Local File System</option>
+                            <option value="database">Database</option>
+                            <option value="s3">S3 Compatible</option>
+                            <option value="ftp">FTP</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <label class="text-sm font-medium text-gray-700">Filter by:</label>
+                        <select 
+                            id="storageFilter" 
+                            onchange="handleStorageChange()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        >
+                            <option value="all">All Storage Backends</option>
+                            <option value="local">Local File System</option>
+                            <option value="database">Database</option>
+                            <option value="s3">S3 Compatible</option>
+                            <option value="ftp">FTP</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blobs List -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-900">Blobs</h2>
+                <button 
+                    onclick="refreshBlobs()" 
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                >
+                    Refresh
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Storage</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blobsList" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                No blobs found. Create your first blob above!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Blob Details Modal -->
+        <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold text-gray-900">Blob Details</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+                    </div>
+                    <div id="modalContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ui/app.js"></script>
+</body>
+</html>
+
